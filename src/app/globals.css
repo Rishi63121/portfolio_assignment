@@ -1,26 +1,519 @@
 @import "tailwindcss";
 
+/* Tokens: dark ink + cream + one live accent (changes with the mood picker) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --bg: #0a0606;
+  --panel: #110a0a;
+  --surface: rgb(26 13 13 / 0.78);
+  --surface-2: rgb(255 236 214 / 0.06);
+  --line: color-mix(in srgb, var(--accent) 30%, transparent);
+  --line-strong: color-mix(in srgb, var(--accent) 60%, transparent);
+  --text: #f1e6d3;
+  --muted: rgb(241 230 211 / 0.7);
+  --faint: rgb(241 230 211 / 0.52);
+  --accent: #e5483d;
+  --accent-ink: #fff4e6;
+  --m1: #d12b2b;
+  --m2: #6f0f18;
+  --m3: #ff8a4c;
+  --go: #4cc38a;
+  --amber: #e3a23b;
+  --stop: #ff6b5e;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-go: var(--go);
+  --color-amber: var(--amber);
+  --color-stop: var(--stop);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-cond: var(--font-anton), Impact, sans-serif;
+  --font-sign: var(--font-sign), cursive;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
+  background: var(--bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-sans);
+  text-wrap: pretty;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- type ---------- */
+.cond {
+  font-family: var(--font-cond);
+  font-weight: 400;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+}
+
+.sign {
+  font-family: var(--font-sign);
+  color: var(--text);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.panel-title {
+  font-family: var(--font-cond);
+  text-transform: uppercase;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.panel-title::after {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 2px;
+  margin-top: 0.7rem;
+  background: var(--accent);
+}
+
+/* ---------- surfaces ---------- */
+.frame {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 6%, rgb(10 6 6 / 0.62)), rgb(10 6 6 / 0.74));
+  backdrop-filter: blur(6px);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+}
+
+.glass {
+  background: rgb(14 8 8 / 0.62);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(18px);
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.25rem 0.62rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  background: var(--surface-2);
+}
+
+.tile {
+  border: 1px solid var(--line-strong);
+  background: #0e0707;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.tile:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 24px 50px -22px color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+.mini {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgb(255 236 214 / 0.045), rgb(255 236 214 / 0.015));
+  transition: border-color 0.25s ease, transform 0.25s ease, background 0.25s ease;
+}
+
+.mini:hover {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 14%, transparent), transparent);
+}
+
+.grain {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+  opacity: 0.3;
+}
+
+/* ---------- motion ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+@keyframes letterUp {
+  from {
+    opacity: 0;
+    transform: translateY(0.5em) scaleY(1.15);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes floaty {
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.035);
+    opacity: 0.92;
+  }
+}
+
+@keyframes drawLine {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 35%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: calc(var(--i, 0) * 100ms);
+  }
+
+  .letter {
+    display: inline-block;
+    animation: letterUp 0.9s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    animation-delay: calc(0.1s + var(--i) * 55ms);
+  }
+
+  .spin-slow {
+    animation: spin 22s linear infinite;
+  }
+
+  .float {
+    animation: floaty 7s ease-in-out infinite;
+  }
+
+  .breathe {
+    animation: breathe 6s ease-in-out infinite;
+  }
+}
+
+.letter {
+  display: inline-block;
+}
+
+/* ---------- ticker ---------- */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------- visuals ---------- */
+@keyframes stage {
+  0%,
+  24%,
+  100% {
+    border-color: var(--line);
+    box-shadow: none;
+  }
+  6%,
+  18% {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px -10px var(--accent);
+  }
+}
+
+@keyframes fillbar {
+  0%,
+  4% {
+    transform: scaleX(0);
+  }
+  14%,
+  100% {
+    transform: scaleX(var(--w, 0.8));
+  }
+}
+
+@keyframes wave {
+  to {
+    stroke-dashoffset: -240;
+  }
+}
+
+.stage {
+  animation: stage 8s ease-in-out infinite;
+  animation-delay: calc(var(--s) * 1.4s);
+}
+
+.fillbar {
+  transform-origin: left;
+  animation: fillbar 8s ease-out infinite;
+  animation-delay: calc(var(--s) * 1.4s);
+}
+
+.wave {
+  stroke-dasharray: 120 120;
+  animation: wave 5s linear infinite;
+  animation-delay: var(--d, 0s);
+}
+
+@keyframes flow {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+
+@keyframes noise {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@keyframes serverPulse {
+  0%,
+  100% {
+    filter: none;
+  }
+  50% {
+    filter: drop-shadow(0 0 8px var(--accent));
+  }
+}
+
+.fl-flow {
+  stroke-dasharray: 4 4;
+  animation: flow 0.8s linear infinite;
+}
+
+.fl-noise {
+  animation: noise 1.6s ease-in-out infinite;
+  animation-delay: calc(var(--s) * 0.4s);
+}
+
+.fl-server {
+  animation: serverPulse 2.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .marquee-track,
+  .stage,
+  .fillbar,
+  .wave,
+  .fl-flow,
+  .fl-noise,
+  .fl-server {
+    animation: none;
+  }
+
+  .fillbar {
+    transform: scaleX(var(--w, 0.8));
+  }
+
+  .wave {
+    stroke-dasharray: none;
+  }
+}
+
+dialog::backdrop {
+  background: rgb(0 0 0 / 0.65);
+  backdrop-filter: blur(6px);
+}
+
+dialog[open] {
+  animation: pop 0.18s ease-out;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+details[open] .plus {
+  transform: rotate(45deg);
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+/* ---------- avatar: 3D head that follows the pointer ---------- */
+.av-head {
+  transform-style: preserve-3d;
+  transform-origin: 50% 82%;
+  transform: perspective(1100px) rotateY(calc(var(--ax, 0) * 20deg)) rotateX(calc(var(--ay, 0) * -14deg));
+  will-change: transform;
+}
+
+.av-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.av-layer svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.av-body {
+  transform: translate(calc(var(--ax, 0) * -7px), calc(var(--ay, 0) * -2px));
+}
+
+.av-pupil {
+  transform: translate(calc(var(--ax, 0) * 6px), calc(var(--ay, 0) * 4px));
+}
+
+/* Eyes: .av-eye is the eyeball (squashes shut), .av-lash is the closed-eye line (fades in as it shuts). */
+.av-eye,
+.wink-eye {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+
+.av-lash,
+.wink-lash {
+  opacity: 0;
+}
+
+@keyframes blink-eye {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  96% {
+    transform: scaleY(0.01);
+  }
+}
+
+@keyframes blink-lash {
+  0%,
+  93%,
+  100% {
+    opacity: 0;
+  }
+  95%,
+  97% {
+    opacity: 1;
+  }
+}
+
+/* one eye only: close fast, hold, open */
+@keyframes wink-eye {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  22%,
+  68% {
+    transform: scaleY(0.01);
+  }
+}
+
+@keyframes wink-lash {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  18%,
+  72% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .av-eye {
+    animation: blink-eye 5.5s infinite;
+  }
+
+  .av-lash {
+    animation: blink-lash 5.5s infinite;
+  }
+
+  .av-head,
+  .av-body,
+  .av-pupil {
+    transition: transform 0.06s linear;
+  }
+
+  .winking .wink-eye {
+    animation: wink-eye 0.52s ease-in-out;
+  }
+
+  .winking .wink-lash {
+    animation: wink-lash 0.52s ease-in-out;
+  }
 }
